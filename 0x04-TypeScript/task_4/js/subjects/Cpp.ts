@@ -1,10 +1,10 @@
-namespace Subjects {
+export namespace Subjects {
   export class Cpp extends Subject {
-    public getRequirements(): string {
+     getRequirements(): string {
       return 'Here is the list of requirements for Cpp';
     }
 
-    public getAvailableTeacher(): string {
+    getAvailableTeacher(): string {
       const teacher = this.getTeacher();
       if (teacher.experienceTeachingC) {
         return `Available Teacher: ${teacher.firstName}`;
