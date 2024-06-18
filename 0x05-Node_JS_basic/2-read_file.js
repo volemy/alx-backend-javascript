@@ -1,34 +1,29 @@
 const fs = require('fs');
-const Papa = require('papaparse');
 
-function countStudents(path) {
+const countStudents = (path) => {
   try {
-    const data = fs.readFileSync(path, 'utf8');
-    const parsedData = Papa.parse(data, {
-      header: true,
-      skipEmptyLines: true,
-    });
-    const students = parsedData.data;
-    const numberOfStudents = students.length;
-    console.log(`Number of students: ${numberOfStudents}`);
+    const response = fs.readFileSync(path, 'utf8');
+    const students = response
+      .trim()
+      .split('\n')
+      .map((student) => student.split(','));
+    students.shift();
+    const fields = {};
 
-    const studSet = new Set();
     students.forEach((student) => {
-      studSet.add(student.field);
+      if (student[3] in fields) fields[student[3]].push(student[0]);
+      else fields[student[3]] = [student[0]];
     });
-    const studFields = Array.from(studSet);
+    console.log(`Number of students: ${students.length}`);
 
-    studFields.forEach((studField) => {
-      const studsPerField = students.filter((student) => student.field === studField);
-      const studFirstName = [];
-      studsPerField.forEach((studPerField) => {
-        studFirstName.push(studPerField.firstname);
-      });
-      console.log(`Number of students in ${studField}: ${studFirstName.length}. List: ${studFirstName.join(', ')}`);
+    Object.keys(fields).forEach((field) => {
+      let message = `Number of students in ${field}: ${fields[field].length}.`;
+      message += ` List: ${fields[field].join(', ')}`;
+      console.log(message);
     });
   } catch (err) {
     throw new Error('Cannot load the database');
   }
-}
+};
 
 module.exports = countStudents;
